@@ -1,0 +1,30 @@
+{
+  "name": "ng-simple-webrtc",
+  "version": "0.1.0",
+  "description": "AngularJS wrapper for SimpleWebRTC client from https://simplewebrtc.com/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bahmutov/ng-simple-webrtc.git"
+  },
+  "keywords": [
+    "webrtc",
+    "video",
+    "peer",
+    "communication",
+    "simple",
+    "simplewebrtc",
+    "angular",
+    "ng",
+    "angularjs"
+  ],
+  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bahmutov/ng-simple-webrtc/issues"
+  },
+  "homepage": "https://github.com/bahmutov/ng-simple-webrtc"
+}
