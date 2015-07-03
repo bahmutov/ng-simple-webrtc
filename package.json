@@ -35,6 +35,8 @@
   },
   "devDependencies": {
     "clean-console": "0.3.0",
+    "console-log-div": "0.6.2",
+    "es5-shim": "4.1.7",
     "pre-git": "0.6.1"
   },
   "pre-commit": "npm test",
