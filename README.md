@@ -2,6 +2,9 @@
 
 > AngularJS wrapper for SimpleWebRTC client from https://simplewebrtc.com/
 
+[![NPM][npm-icon] ][npm-url]
+[![Circle CI][circle-ci-icon] ][circle-ci-url]
+
 AngularJS client for starting video / broadcasting to multiple peers via WebRTC, built
 on top of the [SimpleWebRTC](https://simplewebrtc.com/) code.
 
@@ -44,3 +47,8 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
+
+[npm-icon]: https://nodei.co/npm/ng-simple-webrtc.png?downloads=true
+[npm-url]: https://npmjs.org/package/ng-simple-webrtc
+[circle-ci-icon]: https://circleci.com/gh/bahmutov/ng-simple-webrtc.svg?style=svg
+[circle-ci-url]: https://circleci.com/gh/bahmutov/ng-simple-webrtc
