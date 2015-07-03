@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="node_modules/es5-shim/es5-shim.js"></script>
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="node_modules/simplewebrtc/latest.js"></script>
+  <script src="ng-simple-webrtc.js"></script>
+</head>
+<body ng-app="BroadcastApp">
+  <p>Simple Angular broadcaster via WebRTC</p>
+
+  <div ng-controller="BroadcastController">
+    <button ng-click="prepare()" ng-disabled="hasStream">Prepare to broadcast</button>
+
+    <h2>My video</h2>
+    <div ng-show="hasStream">
+      <video height="300" id="localVideo"></video>
+
+      <h3>Start my own room</h3>
+      <input type="text" ng-model="roomName" placeholder="Enter a new room name" />
+      <button type="button" ng-click="start(roomName)" ng-disabled="!roomName">Start room</button>
+    </div>
+  </div>
+
+  <script src="node_modules/console-log-div/console-log-div.js"></script>
+
+  <script>
+    angular.module('BroadcastApp', ['SimpleWebRTC']);
+  </script>
+</body>
+</html>
