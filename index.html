@@ -2,121 +2,12 @@
 <html>
 <head>
   <script src="node_modules/es5-shim/es5-shim.js"></script>
-  <script src="node_modules/angular/angular.js"></script>
-  <script src="node_modules/simplewebrtc/latest.js"></script>
+  <link href="styles.css" rel="stylesheet">
 </head>
-<body ng-app="SimpleWebRTCApp" ng-controller="SimpleRoom">
-  <p>Example from <a href="https://simplewebrtc.com/">simplewebrtc.com/</a></p>
-
-  <div> <!-- main mode select -->
-    <button type="button" ng-click="startMyRoom()" ng-disabled="mode">Start my room</button>
-    <button type="button" ng-click="joinAnotherRoom()" ng-disabled="mode">Join another room</button>
-  </div>
-
-  <div>
-
-    <div ng-show="mode === 'startMyRoom' && readyToCall">
-      <h2>My video</h2>
-      <video height="300" id="localVideo"
-        ng-show="readyToCall"></video>
-      <h3>Start my own room</h3>
-      <input type="text" ng-model="roomName" placeholder="Start room with name" />
-      <button type="button" ng-click="startRoom()" ng-disabled="!roomName">Start room</button>
-    </div>
-
-    <div ng-show="mode === 'joinAnotherRoom'">
-      <h2>Join another room</h2>
-      <input type="text" ng-model="roomName" placeholder="Join room with name" />
-      <button type="button" ng-click="joinRoom()" ng-disabled="!roomName">Join room</button>
-
-      <h3 ng-show="hasRemoteVideo">Remote video</h3>
-      <div height="300" id="remotes" ng-show="hasRemoteVideo"></div>
-    </div>
-  </div>
-
-  <script src="node_modules/console-log-div/console-log-div.js"></script>
-
-  <script>
-
-    angular.module('SimpleWebRTCApp', [])
-      .controller('SimpleRoom', function ($scope) {
-        var webrtc;
-
-        $scope.startMyRoom = function () {
-          $scope.mode = 'startMyRoom';
-
-          webrtc = new SimpleWebRTC({
-            // the id/element dom element that will hold "our" video
-            localVideoEl: 'localVideo',
-            autoRequestMedia: true,
-            debug: false,
-            nick: 'room-test',
-            // url: 'http://localhost:3400/'
-          });
-          webrtc.mute();
-
-          // webrtc.startLocalVideo();
-          webrtc.on('readyToCall', function () {
-            $scope.readyToCall = true;
-            $scope.$apply();
-            console.log('ready to call');
-          });
-
-          webrtc.on('localStream', function (stream) {
-            console.log('got video stream from local camera');
-          });
-
-          webrtc.on('localMediaError', function (err) {
-            console.error('local camera error', err);
-          });
-
-        };
-
-        $scope.joinAnotherRoom = function () {
-          $scope.mode = 'joinAnotherRoom';
-        };
-
-        $scope.startRoom = function () {
-          console.log('starting room %s', $scope.roomName);
-          webrtc.createRoom($scope.roomName, function (err, name) {
-            if (err) {
-              throw err;
-            }
-            console.log('Created room %s result %s', $scope.roomName, name);
-          });
-        };
-
-        $scope.joinRoom = function joinRoom() {
-          console.log('joining room %s', $scope.roomName);
-          webrtc = new SimpleWebRTC({
-            autoRequestMedia: false,
-            debug: true,
-            // url: 'http://localhost:3400/'
-          });
-          webrtc.mute();
-          webrtc.on('readyToCall', function () {
-            console.log('webrtc ready to call');
-          });
-          webrtc.joinRoom($scope.roomName);
-
-          webrtc.on('videoAdded', function (video, peer) {
-            console.log('video added %s', peer.nick, peer);
-            var remotes = document.getElementById('remotes');
-            remotes.appendChild(video);
-            $scope.hasRemoteVideo = true;
-            $scope.$apply();
-          });
-
-          webrtc.on('iceFailed', function (peer) {
-            console.error('ice failed', peer);
-          });
-
-          webrtc.on('connectivityError', function (peer) {
-            console.error('connectivity error', peer);
-          });
-        };
-
-      });
-  </script>
+<body>
+  <p>Angular wrapper around the simple example from <a href="https://simplewebrtc.com/">simplewebrtc.com/</a>.
+  First start broadcasting from a new room using <a href="broadcast.html">broadcast.html</a>. Then
+  connect as many watchers as needed from <a href="watch.html">watch.html</a> page.
+  </p>
 </body>
 </html>

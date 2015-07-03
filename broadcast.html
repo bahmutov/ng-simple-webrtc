@@ -5,6 +5,7 @@
   <script src="node_modules/angular/angular.js"></script>
   <script src="node_modules/simplewebrtc/latest.js"></script>
   <script src="ng-simple-webrtc.js"></script>
+  <link href="styles.css" rel="stylesheet">
 </head>
 <body ng-app="BroadcastApp">
   <p>Simple Angular broadcaster via WebRTC</p>
@@ -18,7 +19,11 @@
 
       <h3>Start my own room</h3>
       <input type="text" ng-model="roomName" placeholder="Enter a new room name" />
-      <button type="button" ng-click="start(roomName)" ng-disabled="!roomName">Start room</button>
+      <button ng-click="start(roomName)" ng-disabled="!roomName || broadcasting">Start room</button>
+
+      <p ng-show="broadcasting">Broadcasting. To watch connect to this server and open
+      <a href="watch.html" target="_blank">watch.html</a> page.
+      Enter the same room {{ roomName }} and watch this video stream.</p>
     </div>
   </div>
 

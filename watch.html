@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="node_modules/es5-shim/es5-shim.js"></script>
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="node_modules/simplewebrtc/latest.js"></script>
+  <script src="ng-simple-webrtc.js"></script>
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body ng-app="WatchApp">
+  <p>Simple Angular watcher via WebRTC</p>
+
+  <div ng-controller="WatchController">
+
+    <h2>Join and watch a room</h2>
+
+    <input type="text" ng-model="roomName" placeholder="Join room with name" />
+
+    <button ng-click="joinRoom(roomName)"
+      ng-disabled="!roomName || joinedRoom">Join room</button>
+
+    <button ng-click="leaveRoom(roomName)"
+      ng-disabled="!joinedRoom">Leave room</button>
+
+    <div ng-show="joinedRoom">
+      <h3>Remote video</h3>
+      <div height="300" id="remotes"></div>
+    </div>
+  </div>
+
+  <script src="node_modules/console-log-div/console-log-div.js"></script>
+
+  <script>
+    angular.module('WatchApp', ['SimpleWebRTC']);
+  </script>
+
+</body>
+</html>
