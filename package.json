@@ -4,7 +4,7 @@
   "description": "AngularJS wrapper for SimpleWebRTC client from https://simplewebrtc.com/",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "clean-console index.html",
     "start": "http-server -p 3400"
   },
   "repository": {
@@ -29,7 +29,11 @@
   },
   "homepage": "https://github.com/bahmutov/ng-simple-webrtc",
   "dependencies": {
+    "angular": "1.4.1",
     "http-server": "0.8.0",
     "simplewebrtc": "1.19.0"
+  },
+  "devDependencies": {
+    "clean-console": "0.3.0"
   }
 }
