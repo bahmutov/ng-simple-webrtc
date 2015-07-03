@@ -34,6 +34,9 @@
     "simplewebrtc": "1.19.0"
   },
   "devDependencies": {
-    "clean-console": "0.3.0"
-  }
+    "clean-console": "0.3.0",
+    "pre-git": "0.6.1"
+  },
+  "pre-commit": "npm test",
+  "post-commit": "npm version"
 }
