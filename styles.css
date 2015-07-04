@@ -1,3 +1,7 @@
 body {
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
+
+video {
+  width: 100%;
+}

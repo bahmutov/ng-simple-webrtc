@@ -8,6 +8,20 @@
 AngularJS client for starting video / broadcasting to multiple peers via WebRTC, built
 on top of the [SimpleWebRTC](https://simplewebrtc.com/) code.
 
+This example wraps the calls to the WebRTC library into 2 simple Angular directives: a broadcaster
+and a room watcher. A single broadcasted stream can be viewed by multiple watchers in a single room.
+
+## Demo
+
+To run the demo locally, clone the repo or install from NPM, then
+
+    npm start
+
+Open the broadcast page `localhost:3400/broadcast.html` and create a room. Open `localhost:3400/watch.html`
+in a separate browser tab and enter the same room name. You should see the broadcasted picture.
+
+![watch screenshot](images/watch.jpg)
+
 ## Install
 
     npm install ng-simple-webrtc --save
@@ -26,6 +40,52 @@ Add `SimpleWebRTC` to the list of your application's module dependencies
 angular.module('WatchApp', ['SimpleWebRTC'])
     // adds custom directive <watch-room>
 ```
+
+## Broadcast a room
+
+Use directive `broadcaster` to connect to the local camera and broadcast the picture.
+Communicate the room name, and see the status properties (`hasStream`, `isBroadcasting`) via
+isolate scope's properties.
+
+```html
+<broadcaster
+  has-stream="hasStream"
+  room-name="roomName"
+  is-broadcasting="isBroadcasting"></broadcaster>
+```
+
+To connect to the camera and start a room, broadcast events `prepare` and `start`
+
+```html
+<div ng-controller="BroadcastAppController">
+  <broadcaster
+    has-stream="hasStream"
+    room-name="roomName"
+    is-broadcasting="isBroadcasting"></broadcaster>
+
+  <button ng-click="prepare()" ng-disabled="hasStream">Prepare to broadcast</button>
+  <div ng-show="hasStream">
+    <input type="text" ng-model="roomName" placeholder="Enter a new room name" />
+    <button ng-click="start()" ng-disabled="!roomName || broadcasting">Start room</button>
+  </div>
+</div>
+```
+```js
+angular.module('BroadcastApp', ['SimpleWebRTC'])
+  .controller('BroadcastAppController', function ($scope) {
+    $scope.hasStream = false;
+    $scope.roomName = '';
+    $scope.isBroadcasting = '';
+    $scope.prepare = function prepare() {
+      $scope.$broadcast('prepare');
+    };
+    $scope.start = function start() {
+      $scope.$broadcast('start');
+    };
+  });
+```
+
+See file [broadcast.html](broadcast.html) for the full demo
 
 ## Watch a room
 
@@ -64,8 +124,6 @@ angular.module('WatchApp', ['SimpleWebRTC'])
 ```
 
 See the included file [watch.html](watch.html) as an example
-
-![watch screenshot](images/watch.jpg)
 
 ### Small print
 

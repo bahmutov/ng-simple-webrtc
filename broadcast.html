@@ -10,27 +10,43 @@
 <body ng-app="BroadcastApp">
   <p>Simple Angular broadcaster via WebRTC</p>
 
-  <div ng-controller="BroadcastController">
+  <div id="ctrl" ng-controller="BroadcastAppController">
     <button ng-click="prepare()" ng-disabled="hasStream">Prepare to broadcast</button>
 
-    <h2>My video</h2>
-    <div ng-show="hasStream">
-      <video height="300" id="localVideo"></video>
+    <broadcaster
+      has-stream="hasStream"
+      room-name="roomName"
+      is-broadcasting="isBroadcasting"></broadcaster>
 
+    <div ng-show="hasStream">
       <h3>Start my own room</h3>
       <input type="text" ng-model="roomName" placeholder="Enter a new room name" />
-      <button ng-click="start(roomName)" ng-disabled="!roomName || broadcasting">Start room</button>
+      <button ng-click="start()" ng-disabled="!roomName || broadcasting">Start room</button>
 
-      <p ng-show="broadcasting">Broadcasting. To watch connect to this server and open
+      <p ng-show="isBroadcasting">Broadcasting. To watch connect to this server and open
       <a href="watch.html" target="_blank">watch.html</a> page.
-      Enter the same room {{ roomName }} and watch this video stream.</p>
+      Enter the same room "{{ roomName }}" and watch this video stream.</p>
     </div>
+
   </div>
 
   <script src="node_modules/console-log-div/console-log-div.js"></script>
 
   <script>
-    angular.module('BroadcastApp', ['SimpleWebRTC']);
+    angular.module('BroadcastApp', ['SimpleWebRTC'])
+      .controller('BroadcastAppController', function ($scope) {
+        $scope.hasStream = false;
+        $scope.roomName = '';
+        $scope.isBroadcasting = '';
+
+        $scope.prepare = function prepare() {
+          $scope.$broadcast('prepare');
+        };
+
+        $scope.start = function start() {
+          $scope.$broadcast('start');
+        };
+      });
   </script>
 </body>
 </html>

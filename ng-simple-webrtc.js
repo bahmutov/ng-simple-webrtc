@@ -8,7 +8,7 @@ angular.module('SimpleWebRTC', [])
     return {
       template: '<div ng-show="joinedRoom">' +
         '<h3>Remote video</h3>' +
-        '<div height="300" id="remotes"></div>' +
+        '<div id="remotes"></div>' +
         '</div>',
       scope: {
         roomName: '=',
@@ -70,42 +70,61 @@ angular.module('SimpleWebRTC', [])
       }
     };
   })
-  .controller('BroadcastController', function ($scope, $element) {
+  .directive('broadcaster', function () {
+    return {
+      template: '<h2>My video</h2>' +
+        '<div ng-show="hasStream">' +
+        '<video height="300" id="localVideo"></video>' +
+        '</div>',
+      scope: {
+        hasStream: '=',
+        roomName: '=',
+        isBroadcasting: '='
+      },
+      controller: function ($scope) {
+        var webrtc;
 
-    var webrtc;
+        $scope.$on('prepare', function prepareToBroadcast() {
+          if (webrtc) {
+            console.log('already has prepared');
+            return;
+          }
 
-    $scope.prepare = function prepareToBroadcast() {
-      // TODO read local video element id from $element attribute
-      webrtc = new SimpleWebRTC({
-        // the id/element dom element that will hold "our" video
-        localVideoEl: 'localVideo',
-        autoRequestMedia: true,
-        debug: false,
-        nick: 'ng-simple-webrtc'
-      });
-      webrtc.mute();
+          webrtc = new SimpleWebRTC({
+            // the id/element dom element that will hold "our" video
+            localVideoEl: 'localVideo',
+            autoRequestMedia: true,
+            debug: false,
+            nick: 'ng-simple-webrtc'
+          });
+          webrtc.mute();
 
-      webrtc.on('localStream', function (stream) {
-        console.log('got video stream from local camera');
-        $scope.hasStream = true;
-        $scope.$apply();
-      });
+          webrtc.on('localStream', function (stream) {
+            console.log('got video stream from local camera');
+            $scope.hasStream = true;
+            $scope.$apply();
+          });
 
-      webrtc.on('localMediaError', function (err) {
-        console.error('local camera error', err);
-      });
-    };
+          webrtc.on('localMediaError', function (err) {
+            console.error('local camera error', err);
+          });
+        });
 
-    $scope.start = function start(roomName) {
-      console.log('starting room', roomName);
+        $scope.$on('start', function start() {
+          console.log('starting room', $scope.roomName);
+          if (!$scope.roomName) {
+            return;
+          }
 
-      webrtc.createRoom(roomName, function (err, name) {
-        if (err) {
-          throw err;
-        }
-        console.log('Created room', name);
-        $scope.broadcasting = true;
-        $scope.$apply();
-      });
+          webrtc.createRoom($scope.roomName, function (err, name) {
+            if (err) {
+              throw err;
+            }
+            console.log('Created room', name);
+            $scope.isBroadcasting = true;
+            $scope.$apply();
+          });
+        });
+      }
     };
   });
