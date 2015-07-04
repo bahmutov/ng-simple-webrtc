@@ -10,28 +10,37 @@
 <body ng-app="WatchApp">
   <p>Simple Angular watcher via WebRTC</p>
 
-  <div ng-controller="WatchController">
+  <div id='ctrl' ng-controller="WatchAppController">
 
     <h2>Join and watch a room</h2>
 
     <input type="text" ng-model="roomName" placeholder="Join room with name" />
 
-    <button ng-click="joinRoom(roomName)"
+    <watch-room room-name="roomName" joined-room="joinedRoom"></watch-room>
+
+    <button ng-click="joinRoom()"
       ng-disabled="!roomName || joinedRoom">Join room</button>
 
-    <button ng-click="leaveRoom(roomName)"
-      ng-disabled="!joinedRoom">Leave room</button>
+    <button ng-click="leaveRoom()"
+      ng-disabled="!roomName || !joinedRoom">Leave room</button>
 
-    <div ng-show="joinedRoom">
-      <h3>Remote video</h3>
-      <div height="300" id="remotes"></div>
-    </div>
   </div>
 
   <script src="node_modules/console-log-div/console-log-div.js"></script>
 
   <script>
-    angular.module('WatchApp', ['SimpleWebRTC']);
+    angular.module('WatchApp', ['SimpleWebRTC'])
+      .controller('WatchAppController', function ($scope) {
+        $scope.roomName = '';
+        $scope.joinedRoom = false;
+
+        $scope.joinRoom = function () {
+          $scope.$broadcast('joinRoom');
+        };
+        $scope.leaveRoom = function () {
+          $scope.$broadcast('leaveRoom');
+        };
+      });
   </script>
 
 </body>

@@ -8,6 +8,65 @@
 AngularJS client for starting video / broadcasting to multiple peers via WebRTC, built
 on top of the [SimpleWebRTC](https://simplewebrtc.com/) code.
 
+## Install
+
+    npm install ng-simple-webrtc --save
+
+Include the script tags, at least Angular and SimpleWebRTC before this module
+
+```html
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/simplewebrtc/latest.js"></script>
+<script src="node_modules/ng-simple-webrtc/ng-simple-webrtc.js"></script>
+```
+
+Add `SimpleWebRTC` to the list of your application's module dependencies
+
+```js
+angular.module('WatchApp', ['SimpleWebRTC'])
+    // adds custom directive <watch-room>
+```
+
+## Watch a room
+
+To join and watch a room (without broadcasting anything yourself) use `watch-room` directive.
+You can pass the room name and see the status via isolate scope attributes
+
+```html
+<input type="text" ng-model="roomName" placeholder="Join room with name" />
+<watch-room room-name="roomName" joined-room="joinedRoom"></watch-room>
+```
+
+You can start watching (join a room) and stop watching (leave a room) by broadcasting
+an event
+
+```html
+<div ng-controller="WatchAppController">
+  <input type="text" ng-model="roomName" placeholder="Join room with name" />
+  <watch-room room-name="roomName" joined-room="joinedRoom"></watch-room>
+  <button ng-click="joinRoom()">Join room</button>
+  <button ng-click="leaveRoom()">Leave room</button>
+</div>
+```
+
+```js
+angular.module('WatchApp', ['SimpleWebRTC'])
+  .controller('WatchAppController', function ($scope) {
+    $scope.roomName = '';
+    $scope.joinedRoom = false;
+    $scope.joinRoom = function () {
+      $scope.$broadcast('joinRoom');
+    };
+    $scope.leaveRoom = function () {
+      $scope.$broadcast('leaveRoom');
+    };
+  });
+```
+
+See the included file [watch.html](watch.html) as an example
+
+![watch screenshot](images/watch.jpg)
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
