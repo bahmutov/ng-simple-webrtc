@@ -31,6 +31,12 @@ angular.module('SimpleWebRTC', [])
           webrtc.on('readyToCall', function () {
             console.log('webrtc ready to call');
           });
+
+          webrtc.on('joinedRoom', function (name) {
+            console.log('joined room "%s"', name);
+            $scope.$emit('joinedRoom', name);
+          });
+
           webrtc.joinRoom($scope.roomName);
 
           webrtc.on('videoAdded', function (video, peer) {
