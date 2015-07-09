@@ -127,6 +127,7 @@ angular.module('SimpleWebRTC', [])
 
           webrtc.createRoom($scope.roomName, function (err, name) {
             if (err) {
+              $scope.$broacast('createRoomError', err);
               throw err;
             }
             console.log('Created room', name);
