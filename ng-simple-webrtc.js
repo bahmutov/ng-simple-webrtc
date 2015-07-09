@@ -46,10 +46,12 @@ angular.module('SimpleWebRTC', [])
 
           webrtc.on('iceFailed', function (peer) {
             console.error('ice failed', peer);
+            $scope.$emit('iceFailed', peer);
           });
 
           webrtc.on('connectivityError', function (peer) {
             console.error('connectivity error', peer);
+            $scope.$emit('connectivityError', peer);
           });
         });
 
@@ -107,6 +109,7 @@ angular.module('SimpleWebRTC', [])
 
           webrtc.on('localMediaError', function (err) {
             console.error('local camera error', err);
+            $scope.$emit('localMediaError', err);
           });
         });
 
