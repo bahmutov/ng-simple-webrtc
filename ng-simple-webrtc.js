@@ -89,6 +89,9 @@ angular.module('SimpleWebRTC', [])
         roomName: '=',
         isBroadcasting: '='
       },
+      link: function (scope, element, attr) {
+        scope.mirror = attr.mirror === 'true';
+      },
       controller: function ($scope) {
         var webrtc;
 
@@ -105,6 +108,7 @@ angular.module('SimpleWebRTC', [])
             debug: false,
             nick: 'ng-simple-webrtc'
           });
+          webrtc.config.localVideo.mirror = Boolean($scope.mirror);
           webrtc.mute();
 
           webrtc.on('localStream', function (stream) {

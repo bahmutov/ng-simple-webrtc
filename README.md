@@ -51,8 +51,11 @@ isolate scope's properties.
 <broadcaster
   has-stream="hasStream"
   room-name="roomName"
+  mirror="true"
   is-broadcasting="isBroadcasting"></broadcaster>
 ```
+
+You can control camera mirror display by setting "true" or "false" value of the `mirror` attribute.
 
 To connect to the camera and start a room, broadcast events `prepare` and `start`
 
