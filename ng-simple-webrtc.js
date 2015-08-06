@@ -81,7 +81,7 @@ angular.module('SimpleWebRTC', [])
   .directive('broadcaster', function () {
     return {
       template: '<h2>My video</h2>' +
-        '<div ng-show="hasStream">' +
+        '<div class="local-video-wrapper" ng-show="hasStream">' +
         '<video height="300" id="localVideo"></video>' +
         '</div>',
       scope: {
