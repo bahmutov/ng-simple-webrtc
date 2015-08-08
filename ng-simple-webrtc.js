@@ -14,6 +14,9 @@ angular.module('SimpleWebRTC', [])
         roomName: '=',
         joinedRoom: '='
       },
+      link: function (scope, element, attr) {
+        scope.muted = attr.muted === 'true';
+      },
       controller: function ($scope) {
         var webrtc, watchingVideo;
 
@@ -41,6 +44,10 @@ angular.module('SimpleWebRTC', [])
 
           webrtc.on('videoAdded', function (video, peer) {
             console.log('video added from peer nickname', peer.nick);
+
+            if ($scope.muted) {
+              video.setAttribute('muted', true);
+            }
 
             var remotes = document.getElementById('remotes');
             remotes.appendChild(video);
@@ -82,7 +89,7 @@ angular.module('SimpleWebRTC', [])
     return {
       template: '<h2>My video</h2>' +
         '<div class="local-video-wrapper" ng-show="hasStream">' +
-        '<video height="300" id="localVideo"></video>' +
+        '<video height="300" id="localVideo" ng-attr-muted={{ muted }}></video>' +
         '</div>',
       scope: {
         hasStream: '=',
@@ -91,6 +98,7 @@ angular.module('SimpleWebRTC', [])
       },
       link: function (scope, element, attr) {
         scope.mirror = attr.mirror === 'true';
+        scope.muted = attr.muted === 'true';
       },
       controller: function ($scope) {
         var webrtc;
@@ -109,7 +117,9 @@ angular.module('SimpleWebRTC', [])
             nick: 'ng-simple-webrtc'
           });
           webrtc.config.localVideo.mirror = Boolean($scope.mirror);
-          webrtc.mute();
+          if (scope.muted) {
+            webrtc.mute();
+          }
 
           webrtc.on('localStream', function (stream) {
             console.log('got video stream from local camera');

@@ -16,7 +16,7 @@
 
     <input type="text" ng-model="roomName" placeholder="Join room with name" />
 
-    <watch-room room-name="roomName" joined-room="joinedRoom"></watch-room>
+    <watch-room room-name="roomName" joined-room="joinedRoom" muted="true"></watch-room>
 
     <button ng-click="joinRoom()"
       ng-disabled="!roomName || joinedRoom">Join room</button>

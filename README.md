@@ -52,6 +52,7 @@ isolate scope's properties.
   has-stream="hasStream"
   room-name="roomName"
   mirror="true"
+  muted="true"
   is-broadcasting="isBroadcasting"></broadcaster>
 ```
 
@@ -97,7 +98,7 @@ You can pass the room name and see the status via isolate scope attributes
 
 ```html
 <input type="text" ng-model="roomName" placeholder="Join room with name" />
-<watch-room room-name="roomName" joined-room="joinedRoom"></watch-room>
+<watch-room room-name="roomName" joined-room="joinedRoom" muted="true"></watch-room>
 ```
 
 You can start watching (join a room) and stop watching (leave a room) by broadcasting
