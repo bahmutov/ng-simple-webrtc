@@ -95,7 +95,7 @@
       return {
         template: '<h2>My video</h2>' +
           '<div class="local-video-wrapper" ng-show="hasStream">' +
-          '<video height="300" id="localVideo" ng-attr-muted={{ muted }}></video>' +
+          '<video height="300" id="localVideo" ng-attr-muted="{{ muted }}"></video>' +
           '</div>',
         scope: {
           hasStream: '=',
@@ -120,12 +120,24 @@
               localVideoEl: 'localVideo',
               autoRequestMedia: true,
               debug: false,
-              nick: 'ng-simple-webrtc'
+              nick: 'ng-simple-webrtc',
+              media: {
+                audio: true,
+                video: true
+              }
             };
             if ($scope.muted) {
               webrtcOptions.media = {
                 audio: false,
                 video: true
+              };
+            }
+            // source id returned from navigator.getUserMedia (optional)
+            var sourceId = $scope.sourceId || $scope.$parent.sourceId;
+            if (sourceId) {
+              console.log('requesting video camera with id ' + sourceId);
+              webrtcOptions.media.video = {
+                optional: [{ sourceId: sourceId }]
               };
             }
             webrtc = new SimpleWebRTC(webrtcOptions);
