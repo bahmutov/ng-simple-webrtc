@@ -115,13 +115,20 @@
               return;
             }
 
-            webrtc = new SimpleWebRTC({
+            var webrtcOptions = {
               // the id/element dom element that will hold "our" video
               localVideoEl: 'localVideo',
               autoRequestMedia: true,
               debug: false,
               nick: 'ng-simple-webrtc'
-            });
+            };
+            if ($scope.muted) {
+              webrtcOptions.media = {
+                audio: false,
+                video: true
+              };
+            }
+            webrtc = new SimpleWebRTC(webrtcOptions);
             webrtc.config.localVideo.mirror = Boolean($scope.mirror);
             if ($scope.muted) {
               webrtc.mute();
