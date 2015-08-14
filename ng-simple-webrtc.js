@@ -95,7 +95,7 @@
       return {
         template: '<h2>My video</h2>' +
           '<div class="local-video-wrapper" ng-show="hasStream">' +
-          '<video height="300" id="localVideo" ng-attr-muted="{{ muted }}"></video>' +
+          '<video id="localVideo" ng-attr-muted="{{ muted }}"></video>' +
           '</div>',
         scope: {
           hasStream: '=',
@@ -147,7 +147,13 @@
             }
 
             webrtc.on('localStream', function (stream) {
-              console.log('got video stream from local camera');
+              console.log('got video stream', stream, 'from the local camera');
+              var videoTracks = stream.getVideoTracks();
+              console.log('how many video tracks?', videoTracks.length);
+              if (videoTracks.length) {
+                var first = videoTracks[0];
+                console.log('video track label', first.label);
+              }
               $scope.hasStream = true;
               $scope.$apply();
             });
