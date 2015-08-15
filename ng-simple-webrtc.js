@@ -109,7 +109,7 @@
           scope.mirror = attr.mirror === 'true';
           scope.muted = attr.muted === 'true';
         },
-        controller: function ($scope) {
+        controller: function ($scope, $timeout) {
           var webrtc;
 
           $scope.$on('prepare', function prepareToBroadcast() {
@@ -154,11 +154,29 @@
               };
             }
 
+            function displayVideoResolution() {
+              var resolution = {
+                width: localVideo.videoWidth,
+                height: localVideo.videoHeight
+              };
+              $scope.$emit('video-resolution', resolution);
+              console.log('local video resolution', resolution.width, resolution.height);
+            }
+
+            var localVideo = document.getElementById('localVideo');
+            localVideo.addEventListener('play', function localVideoPlay() {
+              $timeout(displayVideoResolution, 500);
+            });
+
             webrtc = new SimpleWebRTC(webrtcOptions);
             webrtc.config.localVideo.mirror = Boolean($scope.mirror);
             if ($scope.muted) {
               webrtc.mute();
             }
+
+            webrtc.on('videoAdded', function remoteVideoAdded(e) {
+              console.log('remote video added', e);
+            });
 
             webrtc.on('localStream', function (stream) {
               console.log('got video stream', stream, 'from the local camera');

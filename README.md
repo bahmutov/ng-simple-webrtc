@@ -91,6 +91,9 @@ angular.module('BroadcastApp', ['SimpleWebRTC'])
 
 See file [broadcast.html](broadcast.html) for the full demo
 
+When local video starts, the directive broadcasts 'video-resolution' event with width and height
+of the captured video stream.
+
 ## Watch a room
 
 To join and watch a room (without broadcasting anything yourself) use `watch-room` directive.
