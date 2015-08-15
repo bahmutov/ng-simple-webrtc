@@ -100,7 +100,10 @@
         scope: {
           hasStream: '=',
           roomName: '=',
-          isBroadcasting: '='
+          isBroadcasting: '=',
+          sourceId: '=',
+          minWidth: '=',
+          minHeight: '='
         },
         link: function (scope, element, attr) {
           scope.mirror = attr.mirror === 'true';
@@ -133,13 +136,24 @@
               };
             }
             // source id returned from navigator.getUserMedia (optional)
-            var sourceId = $scope.sourceId || $scope.$parent.sourceId;
+            var sourceId = $scope.sourceId;
             if (sourceId) {
               console.log('requesting video camera with id ' + sourceId);
               webrtcOptions.media.video = {
                 optional: [{ sourceId: sourceId }]
               };
             }
+            if ($scope.minWidth) {
+              var minWidth = parseInt($scope.minWidth);
+              if (typeof webrtcOptions.media.video !== 'object') {
+                webrtcOptions.media.video = {};
+              }
+              webrtcOptions.media.video.mandatory = {
+                minWidth: minWidth,
+                maxWidth: minWidth
+              };
+            }
+
             webrtc = new SimpleWebRTC(webrtcOptions);
             webrtc.config.localVideo.mirror = Boolean($scope.mirror);
             if ($scope.muted) {

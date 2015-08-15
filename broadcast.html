@@ -18,7 +18,8 @@
       mirror="true"
       room-name="roomName"
       muted="true"
-      sourceId="sourceId"
+      source-id="sourceId"
+      min-width="minWidth"
       is-broadcasting="isBroadcasting"></broadcaster>
 
     <div ng-show="hasStream">
@@ -54,6 +55,7 @@
         // set to value if you want to connect to a specific source
         // source id returned by navigator.getUserMedia
         $scope.sourceId = '140903818cd57b682ab8d6e23005d501ae3627fdffa0331a88ea580afff9eb71';
+        $scope.minWidth = 1280;
 
         $scope.prepare = function prepare() {
           $scope.$broadcast('prepare');
