@@ -50,7 +50,7 @@
             webrtc.joinRoom($scope.roomName);
 
             webrtc.on('videoRemoved', function (video, peer) {
-              if (Object.prototype.toString.call($scope.videoList) === '[object Array]') {
+              if (Array.isArray($scope.videoList)) {
                 for (var i = 0; i < $scope.videoList.length; i++) {
                   if (video.id === $scope.videoList[i].id) {
                     $scope.videoList.splice(i, 1);
@@ -69,7 +69,7 @@
 
               // videoList is an array, it means the user wants to append the video in it
               // so, skip manual addition to dom
-              if (Object.prototype.toString.call($scope.videoList) === '[object Array]') {
+              if (Array.isArray($scope.videoList)) {
                 video.isRemote = true;
                 $scope.videoList.push(video);
                 $scope.joinedRoom = true;
