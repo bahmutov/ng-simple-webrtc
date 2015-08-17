@@ -132,6 +132,30 @@ angular.module('WatchApp', ['SimpleWebRTC'])
 
 See the included file [watch.html](watch.html) as an example
 
+## Custom video list
+
+You can supply an array to hold all videos and handle the layout by your self instead of appended by the library. 
+You must provide an empty array to initialize it and pass it to the `video-list` attribute to `broadcaster` or `watch-room` directives (or both).
+
+```html
+  <watch-room room-name="roomName" joined-room="joinedRoom" video-list="videoList"></watch-room>
+```
+
+```js
+angular.module('WatchApp', ['SimpleWebRTC'])
+  .controller('WatchAppController', function ($scope) {
+    $scope.roomName = '';
+    $scope.joinedRoom = false;
+    $scope.videoList = []; // initialize videoList variable to hold all videos coming to watch-room directive
+    $scope.joinRoom = function () {
+      $scope.$broadcast('joinRoom');
+    };
+    $scope.leaveRoom = function () {
+      $scope.$broadcast('leaveRoom');
+    };
+  });
+```
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
