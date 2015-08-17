@@ -18,7 +18,8 @@
           '</div>',
         scope: {
           roomName: '=',
-          joinedRoom: '='
+          joinedRoom: '=',
+          videoList: '='
         },
         link: function (scope, element, attr) {
           scope.muted = attr.muted === 'true';
@@ -48,11 +49,32 @@
 
             webrtc.joinRoom($scope.roomName);
 
+            webrtc.on('videoRemoved', function (video, peer) {
+              if (Object.prototype.toString.call($scope.videoList) === '[object Array]') {
+                for (var i = 0; i < $scope.videoList.length; i++) {
+                  if (video.id === $scope.videoList[i].id) {
+                    $scope.videoList.splice(i, 1);
+                    $scope.$apply();
+                    return;
+                  }
+                }
+              }
+            });
+
             webrtc.on('videoAdded', function (video, peer) {
               console.log('video added from peer nickname', peer.nick);
-
               if ($scope.muted) {
                 video.setAttribute('muted', true);
+              }
+
+              // videoList is an array, it means the user wants to append the video in it
+              // so, skip manual addition to dom
+              if (Object.prototype.toString.call($scope.videoList) === '[object Array]') {
+                video.isRemote = true;
+                $scope.videoList.push(video);
+                $scope.joinedRoom = true;
+                $scope.$apply();
+                return;
               }
 
               var remotes = document.getElementById('remotes');
@@ -103,7 +125,8 @@
           isBroadcasting: '=',
           sourceId: '=',
           minWidth: '=',
-          minHeight: '='
+          minHeight: '=',
+          videoList: '='
         },
         link: function (scope, element, attr) {
           scope.mirror = attr.mirror === 'true';
@@ -164,19 +187,17 @@
             }
 
             var localVideo = document.getElementById('localVideo');
-            localVideo.addEventListener('play', function localVideoPlay() {
-              $timeout(displayVideoResolution, 500);
-            });
+            if (localVideo) {
+              localVideo.addEventListener('play', function localVideoPlay() {
+                $timeout(displayVideoResolution, 500);
+              });
+            }
 
             webrtc = new SimpleWebRTC(webrtcOptions);
             webrtc.config.localVideo.mirror = Boolean($scope.mirror);
             if ($scope.muted) {
               webrtc.mute();
             }
-
-            webrtc.on('videoAdded', function remoteVideoAdded(e) {
-              console.log('remote video added', e);
-            });
 
             webrtc.on('localStream', function (stream) {
               console.log('got video stream', stream, 'from the local camera');
@@ -186,6 +207,16 @@
                 var first = videoTracks[0];
                 console.log('video track label', first.label);
               }
+              // videoList is an array, it means the user wants to append the video in it
+              if (Object.prototype.toString.call($scope.videoList) === '[object Array]') {
+                var video = document.createElement("video");
+                video.id = stream.id;
+                video.src = window.URL.createObjectURL(stream);
+                video.play();
+                video.isRemote = false;
+                $scope.videoList.push(video);
+              }
+
               $scope.hasStream = true;
               $scope.$apply();
             });
