@@ -208,7 +208,7 @@
                 console.log('video track label', first.label);
               }
               // videoList is an array, it means the user wants to append the video in it
-              if (Object.prototype.toString.call($scope.videoList) === '[object Array]') {
+              if (Array.isArray($scope.videoList)) {
                 var video = document.createElement("video");
                 video.id = stream.id;
                 video.src = window.URL.createObjectURL(stream);
