@@ -222,8 +222,12 @@
             });
 
             webrtc.on('localMediaError', function (err) {
-              console.error('local camera error', err);
-              $scope.$emit('localMediaError', err);
+              console.error('local camera error', err,
+                'media constraints', webrtc.config.media);
+              $scope.$emit('localMediaError', {
+                error: err,
+                config: webrtc.config.media
+              });
             });
           });
 
