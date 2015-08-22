@@ -48,10 +48,10 @@
               console.log('joined room "%s"', name);
               $scope.$emit('joinedRoom', name);
 
-              // listen to messages via WebRTC
-              webrtc.on('*', function (name, arg) {
-                console.log('webrtc event', name);
-                console.dir(arg);
+              webrtc.on('channelMessage', function (peer, message) {
+                console.log('received channel message "%s" from peer "%s"',
+                  message, peer.nick || peer.id);
+                $scope.$emit('channelMessage', peer, message);
               });
             });
 
@@ -259,10 +259,19 @@
               $scope.$apply();
             });
 
+            /*
             webrtc.on('*', function (name, arg) {
               console.log('webrtc event', name);
               console.dir(arg);
+            });*/
+            // a peer can send message to everyone in the room using
+            // webrtc.sendDirectlyToAll('hi there')
+            webrtc.on('channelMessage', function (peer, message) {
+              console.log('received channel message "%s" from peer "%s"',
+                message, peer.nick || peer.id);
+              $scope.$emit('channelMessage', peer, message);
             });
+
           });
         }
       };
