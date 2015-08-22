@@ -81,6 +81,7 @@
               remotes.appendChild(video);
               watchingVideo = video;
 
+              $scope.$emit('videoAdded', video);
               $scope.joinedRoom = true;
               $scope.$apply();
             });
