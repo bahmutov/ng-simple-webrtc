@@ -245,6 +245,7 @@
               }
               console.log('Created room', name);
               $scope.isBroadcasting = true;
+              $scope.$emit('created-room', name);
               $scope.$apply();
             });
           });
