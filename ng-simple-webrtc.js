@@ -37,6 +37,8 @@
               autoRequestMedia: false,
               debug: false
             });
+            window.webrtc = webrtc;
+
             webrtc.mute();
             webrtc.on('readyToCall', function () {
               console.log('webrtc ready to call');
@@ -45,6 +47,12 @@
             webrtc.on('joinedRoom', function (name) {
               console.log('joined room "%s"', name);
               $scope.$emit('joinedRoom', name);
+
+              // listen to messages via WebRTC
+              webrtc.on('*', function (name, arg) {
+                console.log('webrtc event', name);
+                console.dir(arg);
+              });
             });
 
             webrtc.joinRoom($scope.roomName);
@@ -195,6 +203,8 @@
             }
 
             webrtc = new SimpleWebRTC(webrtcOptions);
+            window.webrtc = webrtc;
+
             webrtc.config.localVideo.mirror = Boolean($scope.mirror);
             if ($scope.muted) {
               webrtc.mute();
@@ -247,6 +257,11 @@
               $scope.isBroadcasting = true;
               $scope.$emit('created-room', name);
               $scope.$apply();
+            });
+
+            webrtc.on('*', function (name, arg) {
+              console.log('webrtc event', name);
+              console.dir(arg);
             });
           });
         }
