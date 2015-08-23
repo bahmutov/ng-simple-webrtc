@@ -57,7 +57,7 @@
             });
 
             $scope.$on('messageAll', function (event, message) {
-              if (message) {
+              if (message && webrtc) {
                 webrtc.sendDirectlyToAll(message);
               }
             });
@@ -279,7 +279,7 @@
           });
 
           $scope.$on('messageAll', function (event, message) {
-            if (message) {
+            if (message && webrtc) {
               webrtc.sendDirectlyToAll(message);
             }
           });

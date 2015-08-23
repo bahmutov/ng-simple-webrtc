@@ -1,6 +1,6 @@
 {
   "name": "ng-simple-webrtc",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "AngularJS wrapper for SimpleWebRTC client from https://simplewebrtc.com/",
   "main": "index.js",
   "scripts": {
