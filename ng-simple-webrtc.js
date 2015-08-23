@@ -24,7 +24,7 @@
         link: function (scope, element, attr) {
           scope.muted = attr.muted === 'true';
         },
-        controller: function ($scope) {
+        controller: function ($scope, $rootScope) {
           var webrtc, watchingVideo;
 
           $scope.$on('joinRoom', function joinRoom() {
@@ -37,7 +37,7 @@
               autoRequestMedia: false,
               debug: false
             });
-            window.webrtc = webrtc;
+            $rootScope.webrtc = webrtc;
 
             webrtc.mute();
             webrtc.on('readyToCall', function () {
@@ -141,7 +141,7 @@
           scope.mirror = attr.mirror === 'true';
           scope.muted = attr.muted === 'true';
         },
-        controller: function ($scope, $timeout) {
+        controller: function ($scope, $timeout, $rootScope) {
           var webrtc;
 
           $scope.$on('prepare', function prepareToBroadcast() {
@@ -203,7 +203,7 @@
             }
 
             webrtc = new SimpleWebRTC(webrtcOptions);
-            window.webrtc = webrtc;
+            $rootScope.webrtc = webrtc;
 
             webrtc.config.localVideo.mirror = Boolean($scope.mirror);
             if ($scope.muted) {
@@ -222,6 +222,7 @@
               if (Array.isArray($scope.videoList)) {
                 var video = document.createElement("video");
                 video.id = stream.id;
+                // TODO use $window service
                 video.src = window.URL.createObjectURL(stream);
                 video.play();
                 video.isRemote = false;
@@ -259,11 +260,6 @@
               $scope.$apply();
             });
 
-            /*
-            webrtc.on('*', function (name, arg) {
-              console.log('webrtc event', name);
-              console.dir(arg);
-            });*/
             // a peer can send message to everyone in the room using
             // webrtc.sendDirectlyToAll('hi there')
             webrtc.on('channelMessage', function (peer, message) {
@@ -272,6 +268,10 @@
               $scope.$emit('channelMessage', peer, message);
             });
 
+          });
+
+          $scope.$on('message-all', function (event, message) {
+            webrtc.sendDirectlyToAll(message);
           });
         }
       };

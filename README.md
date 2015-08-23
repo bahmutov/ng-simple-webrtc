@@ -156,6 +156,10 @@ angular.module('WatchApp', ['SimpleWebRTC'])
   });
 ```
 
+## Details
+
+The `webrtc` object created by the `SimpleWebRTC` library is attached to the `$rootScope`.
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
