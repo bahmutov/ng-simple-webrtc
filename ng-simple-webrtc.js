@@ -52,7 +52,14 @@
                 console.log('received channel message "%s" from peer "%s"',
                   message, peer.nick || peer.id);
                 $scope.$emit('channelMessage', peer, message);
+                $scope.$apply();
               });
+            });
+
+            $scope.$on('messageAll', function (event, message) {
+              if (message) {
+                webrtc.sendDirectlyToAll(message);
+              }
             });
 
             webrtc.joinRoom($scope.roomName);
@@ -266,12 +273,15 @@
               console.log('received channel message "%s" from peer "%s"',
                 message, peer.nick || peer.id);
               $scope.$emit('channelMessage', peer, message);
+              $scope.$apply();
             });
 
           });
 
-          $scope.$on('message-all', function (event, message) {
-            webrtc.sendDirectlyToAll(message);
+          $scope.$on('messageAll', function (event, message) {
+            if (message) {
+              webrtc.sendDirectlyToAll(message);
+            }
           });
         }
       };

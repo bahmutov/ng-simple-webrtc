@@ -30,6 +30,9 @@
       <p ng-show="isBroadcasting">Broadcasting. To watch connect to this server and open
       <a href="watch.html" target="_blank">watch.html</a> page.
       Enter the same room "{{ roomName }}" and watch this video stream.</p>
+
+      <p>Message <input type="text" ng-model="message" placeholder="Enter message" /> to peers
+      in the room <button ng-click="sendMessage()">Send</button>
     </div>
 
   </div>
@@ -54,8 +57,9 @@
         $scope.isBroadcasting = '';
         // set to value if you want to connect to a specific source
         // source id returned by navigator.getUserMedia
-        $scope.sourceId = '140903818cd57b682ab8d6e23005d501ae3627fdffa0331a88ea580afff9eb71';
+        // $scope.sourceId = '140903818cd57b682ab8d6e23005d501ae3627fdffa0331a88ea580afff9eb71';
         $scope.minWidth = 1280;
+        $scope.message = 'hi there';
 
         $scope.prepare = function prepare() {
           $scope.$broadcast('prepare');
@@ -64,6 +68,13 @@
         $scope.start = function start() {
           $scope.$broadcast('start');
         };
+
+        $scope.sendMessage = function sendMessage() {
+          $scope.$broadcast('messageAll', $scope.message);
+        };
+        $scope.$on('channelMessage', function (event, peer, message) {
+          console.log('message', message);
+        });
       });
   </script>
 </body>

@@ -24,6 +24,9 @@
     <button ng-click="leaveRoom()"
       ng-disabled="!roomName || !joinedRoom">Leave room</button>
 
+    <p>Message <input type="text" ng-model="message" placeholder="Enter message" /> to peers
+    in the room <button ng-click="sendMessage()">Send</button>
+
   </div>
 
   <script src="node_modules/console-log-div/console-log-div.js"></script>
@@ -33,6 +36,7 @@
       .controller('WatchAppController', function ($scope) {
         $scope.roomName = '';
         $scope.joinedRoom = false;
+        $scope.message = 'watching the room';
 
         $scope.joinRoom = function () {
           $scope.$broadcast('joinRoom');
@@ -42,6 +46,12 @@
         };
 
         // print broadcasted messages?
+        $scope.sendMessage = function sendMessage() {
+          $scope.$broadcast('messageAll', $scope.message);
+        };
+        $scope.$on('channelMessage', function (event, peer, message) {
+          console.log('message', message);
+        });
       });
   </script>
 

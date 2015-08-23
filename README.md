@@ -160,6 +160,25 @@ angular.module('WatchApp', ['SimpleWebRTC'])
 
 The `webrtc` object created by the `SimpleWebRTC` library is attached to the `$rootScope`.
 
+To broadcast a message to all peers in the room via RTC data channel, use `messageAll` event.
+
+```js
+$scope.sendMessage = function sendMessage() {
+  $scope.$broadcast('messageAll', {
+    from: 'username',
+    text: 'hi there'
+  });
+};
+```
+
+Each peer will receive the message via 'channelMessage' event. The event will have 2 arguments: `peer` and `message`.
+
+```js
+$scope.$on('channelMessage', function (event, peer, message) {
+  console.log('message', message);
+});
+```
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
