@@ -51,14 +51,14 @@
               webrtc.on('channelMessage', function (peer, message) {
                 console.log('received channel message "%s" from peer "%s"',
                   message, peer.nick || peer.id);
-                $scope.$emit('channelMessage', peer, message);
+                $scope.$emit('channelMessage', peer, JSON.parse(message));
                 $scope.$apply();
               });
             });
 
             $scope.$on('messageAll', function (event, message) {
               if (message && webrtc) {
-                webrtc.sendDirectlyToAll(message);
+                webrtc.sendDirectlyToAll(JSON.stringify(message));
               }
             });
 
@@ -272,7 +272,8 @@
             webrtc.on('channelMessage', function (peer, message) {
               console.log('received channel message "%s" from peer "%s"',
                 message, peer.nick || peer.id);
-              $scope.$emit('channelMessage', peer, message);
+              var value = JSON.parse(message);
+              $scope.$emit('channelMessage', peer, value);
               $scope.$apply();
             });
 
@@ -280,7 +281,8 @@
 
           $scope.$on('messageAll', function (event, message) {
             if (message && webrtc) {
-              webrtc.sendDirectlyToAll(message);
+              var str = JSON.stringify(message);
+              webrtc.sendDirectlyToAll(str);
             }
           });
         }

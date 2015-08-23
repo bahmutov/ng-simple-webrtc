@@ -179,6 +179,8 @@ $scope.$on('channelMessage', function (event, peer, message) {
 });
 ```
 
+The `message` is automatically JSON stringified and parsed when sent.
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
