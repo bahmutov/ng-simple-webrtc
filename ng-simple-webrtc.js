@@ -19,13 +19,17 @@
         scope: {
           roomName: '=',
           joinedRoom: '=',
-          videoList: '='
+          videoList: '=',
+          maxNumPeers: '='
         },
         link: function (scope, element, attr) {
           scope.muted = attr.muted === 'true';
         },
         controller: function ($scope, $rootScope) {
           var webrtc, watchingVideo;
+
+          $scope.maxNumPeers = typeof $scope.maxNumPeers === 'number' ?
+            $scope.maxNumPeers : 10;
 
           $scope.$on('joinRoom', function joinRoom() {
             console.log('joining room', $scope.roomName);
@@ -46,6 +50,16 @@
 
             webrtc.on('joinedRoom', function (name) {
               console.log('joined room "%s"', name);
+
+              var peers = webrtc.getPeers();
+              if (peers && Array.isArray(peers) &&
+                peers.length > $scope.maxNumPeers) {
+                console.error('Too many people in the room, leaving');
+                webrtc.leaveRoom();
+                $scope.$emit('room-full');
+                return;
+              }
+
               $scope.$emit('joinedRoom', name);
 
               webrtc.on('channelMessage', function (peer, message) {

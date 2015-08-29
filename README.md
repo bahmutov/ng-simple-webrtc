@@ -101,8 +101,15 @@ You can pass the room name and see the status via isolate scope attributes
 
 ```html
 <input type="text" ng-model="roomName" placeholder="Join room with name" />
-<watch-room room-name="roomName" joined-room="joinedRoom" muted="true"></watch-room>
+<watch-room 
+  room-name="roomName" 
+  joined-room="joinedRoom" 
+  muted="true"
+  max-num-peers="maxAllowedWatchers"></watch-room>
 ```
+
+`maxAllowedWatchers` property controls how many people can be in the room when joining,
+default 10. If more than that, the watcher will leave the room, emitting a message `room-full`.
 
 You can start watching (join a room) and stop watching (leave a room) by broadcasting
 an event
