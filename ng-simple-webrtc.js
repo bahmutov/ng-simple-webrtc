@@ -264,21 +264,42 @@
             });
           });
 
+          function isTakenError(err) {
+            return err === 'taken';
+          }
+
+          function onStartedRoom(name) {
+            console.log('Created room', name);
+            $scope.isBroadcasting = true;
+            $scope.$emit('created-room', name);
+            $scope.$apply();
+          }
+
+          function joinRoomAsBroadcaster() {
+            console.log('Trying to join existing room "%s" as broadcaster', $scope.roomName);
+            webrtc.joinRoom($scope.roomName);
+            $scope.isBroadcasting = true;
+            $scope.$emit('created-room', name);
+          }
+
           $scope.$on('start', function start() {
             console.log('starting room', $scope.roomName);
             if (!$scope.roomName) {
               return;
             }
 
-            webrtc.createRoom($scope.roomName, function (err, name) {
+            webrtc.createRoom($scope.roomName, function (err) {
               if (err) {
-                $scope.$emit('createRoomError', err);
-                throw err;
+                if (isTakenError(err)) {
+                  console.log('Room "%s" is taken', $scope.roomName);
+                  joinRoomAsBroadcaster();
+                } else {
+                  $scope.$emit('createRoomError', err);
+                  throw new Error(err);
+                }
+              } else {
+                onStartedRoom($scope.roomName);
               }
-              console.log('Created room', name);
-              $scope.isBroadcasting = true;
-              $scope.$emit('created-room', name);
-              $scope.$apply();
             });
 
             // a peer can send message to everyone in the room using
