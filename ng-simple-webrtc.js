@@ -20,7 +20,8 @@
           roomName: '=',
           joinedRoom: '=',
           videoList: '=',
-          maxNumPeers: '='
+          maxNumPeers: '=',
+          nick: '='
         },
         link: function (scope, element, attr) {
           scope.muted = attr.muted === 'true';
@@ -39,7 +40,8 @@
 
             webrtc = new SimpleWebRTC({
               autoRequestMedia: false,
-              debug: false
+              debug: false,
+              nick: $scope.nick
             });
             $rootScope.webrtc = webrtc;
 

@@ -105,11 +105,14 @@ You can pass the room name and see the status via isolate scope attributes
   room-name="roomName" 
   joined-room="joinedRoom" 
   muted="true"
+  nick="myEmail"
   max-num-peers="maxAllowedWatchers"></watch-room>
 ```
 
 `maxAllowedWatchers` property controls how many people can be in the room when joining,
 default 10. If more than that, the watcher will leave the room, emitting a message `room-full`.
+
+`nick` is an optional property sent to the remote group on disconnect.
 
 You can start watching (join a room) and stop watching (leave a room) by broadcasting
 an event

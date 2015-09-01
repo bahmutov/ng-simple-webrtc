@@ -16,7 +16,11 @@
 
     <input type="text" ng-model="roomName" placeholder="Join room with name" />
 
-    <watch-room room-name="roomName" joined-room="joinedRoom" muted="true"></watch-room>
+    <watch-room
+      room-name="roomName"
+      joined-room="joinedRoom"
+      nick="userEmail"
+      muted="true"></watch-room>
 
     <button ng-click="joinRoom()"
       ng-disabled="!roomName || joinedRoom">Join room</button>
@@ -37,6 +41,7 @@
         $scope.roomName = '';
         $scope.joinedRoom = false;
         $scope.message = 'watching the room';
+        $scope.userEmail = 'watcher@gmail.com';
 
         $scope.joinRoom = function () {
           $scope.$broadcast('joinRoom');
