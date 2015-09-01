@@ -19,8 +19,7 @@
           roomName: '=',
           joinedRoom: '=',
           videoList: '=',
-          maxNumPeers: '=',
-          nick: '='
+          maxNumPeers: '='
         },
         link: function (scope, element, attr) {
           scope.muted = attr.muted === 'true';
