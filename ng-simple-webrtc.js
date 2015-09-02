@@ -164,7 +164,7 @@
           scope.mirror = attr.mirror === 'true';
           scope.muted = attr.muted === 'true';
         },
-        controller: function ($scope, $timeout, $rootScope) {
+        controller: function ($scope, $rootScope) {
           var webrtc;
 
           $scope.$on('prepare', function prepareToBroadcast() {
@@ -220,8 +220,8 @@
 
             var localVideo = document.getElementById('localVideo');
             if (localVideo) {
-              localVideo.addEventListener('play', function localVideoPlay() {
-                $timeout(displayVideoResolution, 500);
+              localVideo.addEventListener('loadeddata', function localVideoPlay() {
+                displayVideoResolution();
               });
             }
 
