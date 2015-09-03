@@ -13,7 +13,6 @@
     .directive('watchRoom', function () {
       return {
         template: '<div ng-show="joinedRoom">' +
-          '<h3>Remote video</h3>' +
           '<div id="remotes"></div>' +
           '</div>',
         scope: {
