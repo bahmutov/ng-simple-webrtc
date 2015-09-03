@@ -38,11 +38,15 @@
               return;
             }
 
-            webrtc = new SimpleWebRTC({
+            var webrtcOptions = {
               autoRequestMedia: false,
               debug: false,
               nick: $scope.nick
-            });
+            };
+            if (typeof peerConnectionConfig !== 'undefined') {
+              webrtcOptions.peerConnectionConfig = peerConnectionConfig;
+            }
+            webrtc = new SimpleWebRTC(webrtcOptions);
             $rootScope.webrtc = webrtc;
 
             webrtc.mute();
@@ -189,6 +193,9 @@
                 audio: false,
                 video: true
               };
+            }
+            if (typeof peerConnectionConfig !== 'undefined') {
+              webrtcOptions.peerConnectionConfig = peerConnectionConfig;
             }
             // source id returned from navigator.getUserMedia (optional)
             var sourceId = $scope.sourceId;

@@ -191,6 +191,10 @@ $scope.$on('channelMessage', function (event, peer, message) {
 
 The `message` is automatically JSON stringified and parsed when sent.
 
+If the page has global variable `peerConnectionConfig`, it will be added to the simple webrtc options
+during creation. Useful for paid ICE/STUN/TURN services, 
+see for example [xirsys.com](http://xirsys.com/simplewebrtc/) documentation.
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
