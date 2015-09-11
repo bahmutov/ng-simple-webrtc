@@ -40,7 +40,13 @@
             var webrtcOptions = {
               autoRequestMedia: false,
               debug: false,
-              nick: $scope.nick
+              nick: $scope.nick,
+              receiveMedia: { // FIXME: remove old chrome <= 37 constraints format
+                mandatory: {
+                    OfferToReceiveAudio: false,
+                    OfferToReceiveVideo: true
+                }
+              }
             };
             if (typeof peerConnectionConfig !== 'undefined') {
               webrtcOptions.peerConnectionConfig = peerConnectionConfig;
@@ -148,6 +154,9 @@
         }
       };
     })
+
+// ====================================================================================================================================
+
     .directive('broadcaster', function () {
       return {
         template: '<h2>My video</h2>' +
@@ -161,7 +170,8 @@
           sourceId: '=',
           minWidth: '=',
           minHeight: '=',
-          videoList: '='
+          videoList: '=',
+          nick: '='
         },
         link: function (scope, element, attr) {
           scope.mirror = attr.mirror === 'true';
@@ -170,23 +180,26 @@
         controller: function ($scope, $rootScope) {
           var webrtc;
 
-          $scope.$on('prepare', function prepareToBroadcast() {
-            if (webrtc) {
-              console.log('already has prepared');
-              return;
-            }
 
+          function formRTCOptions() {
             var webrtcOptions = {
               // the id/element dom element that will hold "our" video
               localVideoEl: 'localVideo',
               autoRequestMedia: true,
               debug: false,
-              nick: 'ng-simple-webrtc',
+              nick: $scope.nick,
               media: {
-                audio: true,
+                audio: false,
                 video: true
+              },
+              receiveMedia: { // FIXME: remove old chrome <= 37 constraints format
+                mandatory: {
+                    OfferToReceiveAudio: false,
+                    OfferToReceiveVideo: false
+                }
               }
             };
+
             if ($scope.muted) {
               webrtcOptions.media = {
                 audio: false,
@@ -214,32 +227,23 @@
                 maxWidth: minWidth
               };
             }
+            return webrtcOptions;
+          }
 
-            function displayVideoResolution() {
-              var resolution = {
-                width: localVideo.videoWidth,
-                height: localVideo.videoHeight
-              };
-              $scope.$emit('video-resolution', resolution);
-              console.log('local video resolution', resolution.width, resolution.height);
-            }
-
-            var localVideo = document.getElementById('localVideo');
-            if (localVideo) {
-              localVideo.addEventListener('loadeddata', function localVideoPlay() {
-                displayVideoResolution();
-              });
-            }
-
-            webrtc = new SimpleWebRTC(webrtcOptions);
-            $rootScope.webrtc = webrtc;
-
+          // options to make after the webrtc object is created.
+          function postCreationRTCOptions(webrtc)
+          {
             webrtc.config.localVideo.mirror = Boolean($scope.mirror);
             if ($scope.muted) {
               webrtc.mute();
             }
+          }
 
-            webrtc.on('localStream', function (stream) {
+
+          // event Responses to make after the webrtc object is created.
+          function rtcEventResponses(webrtc)
+          {
+              webrtc.on('localStream', function (stream) {
               console.log('got video stream', stream, 'from the local camera');
               var videoTracks = stream.getVideoTracks();
               console.log('how many video tracks?', videoTracks.length);
@@ -270,6 +274,20 @@
                 config: webrtc.config.media
               });
             });
+          }
+
+          $scope.$on('prepare', function prepareToBroadcast() {
+            if (webrtc) {
+              console.log('already has prepared');
+              return;
+            }
+
+            var webrtcOptions = formRTCOptions();
+            webrtc = new SimpleWebRTC(webrtcOptions);
+            $rootScope.webrtc = webrtc;
+            postCreationRTCOptions(webrtc);
+            rtcEventResponses(webrtc);
+
           });
 
           function isTakenError(err) {
@@ -277,7 +295,7 @@
           }
 
           function onStartedRoom(name) {
-            console.log('Created room', name);
+            console.log('joining as broadcaster to room ', name);
             $scope.isBroadcasting = true;
             $scope.$emit('created-room', name);
             $scope.$apply();
@@ -290,6 +308,7 @@
             $scope.$emit('created-room', name);
           }
 
+          // 
           $scope.$on('start', function start() {
             console.log('starting room', $scope.roomName);
             if (!$scope.roomName) {
@@ -305,13 +324,13 @@
                   $scope.$emit('createRoomError', err);
                   throw new Error(err);
                 }
-              } else {
+              } else { 
                 onStartedRoom($scope.roomName);
               }
             });
 
             // a peer can send message to everyone in the room using
-            // webrtc.sendDirectlyToAll('hi there')
+            // webrtc.sendDirectlyToAll('hi there') or webrtc.sendToAll('hi there')
             webrtc.on('channelMessage', function (peer, message) {
               console.log('received channel message "%s" from peer "%s"',
                 message, peer.nick || peer.id);
