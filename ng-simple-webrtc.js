@@ -31,34 +31,30 @@
           $scope.maxNumPeers = typeof $scope.maxNumPeers === 'number' ?
             $scope.maxNumPeers : 10;
 
-          $scope.$on('joinRoom', function joinRoom() {
-            console.log('joining room', $scope.roomName);
-            if (!$scope.roomName) {
-              return;
-            }
-
+          function formRTCOptions() {
             var webrtcOptions = {
-              autoRequestMedia: false,
-              debug: false,
-              nick: $scope.nick,
-              receiveMedia: { // FIXME: remove old chrome <= 37 constraints format
-                mandatory: {
-                    OfferToReceiveAudio: false,
-                    OfferToReceiveVideo: true
+                autoRequestMedia: false,
+                debug: false,
+                nick: $scope.nick,
+                receiveMedia: { // FIXME: remove old chrome <= 37 constraints format
+                  mandatory: {
+                      OfferToReceiveAudio: false,
+                      OfferToReceiveVideo: true
+                  }
                 }
-              }
-            };
-            if (typeof peerConnectionConfig !== 'undefined') {
-              webrtcOptions.peerConnectionConfig = peerConnectionConfig;
-            }
-            webrtc = new SimpleWebRTC(webrtcOptions);
-            $rootScope.webrtc = webrtc;
+              };
+            grabExtraWebRTCOptions(webrtcOptions);
+            return webrtcOptions;            
+          }
 
-            webrtc.mute();
+          function postCreationRTCOptions(webrtc) {
+          }
+
+          function rtcEventResponses(webrtc) {
             webrtc.on('readyToCall', function () {
               console.log('webrtc ready to call');
-            });
-
+            }); 
+          
             webrtc.on('joinedRoom', function (name) {
               console.log('joined room "%s"', name);
 
@@ -80,15 +76,11 @@
                 $scope.$apply();
               });
             });
-
             $scope.$on('messageAll', function (event, message) {
               if (message && webrtc) {
                 webrtc.sendDirectlyToAll(JSON.stringify(message));
               }
             });
-
-            webrtc.joinRoom($scope.roomName);
-
             webrtc.on('videoRemoved', function (video, peer) {
               if (Array.isArray($scope.videoList)) {
                 for (var i = 0; i < $scope.videoList.length; i++) {
@@ -100,11 +92,11 @@
                 }
               }
             });
-
             webrtc.on('videoAdded', function (video, peer) {
               console.log('video added from peer nickname', peer.nick);
               if ($scope.muted) {
                 video.setAttribute('muted', true);
+                video.setAttribute('hidden', true);
               }
 
               // videoList is an array, it means the user wants to append the video in it
@@ -135,24 +127,44 @@
               console.error('connectivity error', peer);
               $scope.$emit('connectivityError', peer);
             });
-          });
 
-          $scope.$on('leaveRoom', function leaveRoom() {
-            console.log('leaving room', $scope.roomName);
+            $scope.$on('leaveRoom', function leaveRoom() {
+              console.log('leaving room', $scope.roomName);
+              if (!$scope.roomName) {
+                return;
+              }
+
+              webrtc.leaveRoom($scope.roomName);
+
+              if (watchingVideo) {
+                var remotes = document.getElementById('remotes');
+                remotes.removeChild(watchingVideo);
+              }
+              $scope.joinedRoom = false;
+            });
+          }
+
+          // emit this event, and we join the room.
+          $scope.$on('joinRoom', function joinRoom() {
+            console.log('joining room', $scope.roomName);
             if (!$scope.roomName) {
               return;
             }
 
-            webrtc.leaveRoom($scope.roomName);
+            var webrtcOptions = formRTCOptions();
+            webrtc = new SimpleWebRTC(webrtcOptions);
+            postCreationRTCOptions(webrtc);
+            $rootScope.webrtc = webrtc;
+            rtcEventResponses(webrtc);
 
-            if (watchingVideo) {
-              var remotes = document.getElementById('remotes');
-              remotes.removeChild(watchingVideo);
-            }
-            $scope.joinedRoom = false;
+            // Post WebRTC Options
+            // And, a joinRoom command.
+
+            webrtc.mute();
+            webrtc.joinRoom($scope.roomName);
           });
         }
-      };
+      }
     })
 
 // ====================================================================================================================================
@@ -180,7 +192,6 @@
         controller: function ($scope, $rootScope) {
           var webrtc;
 
-
           function formRTCOptions() {
             var webrtcOptions = {
               // the id/element dom element that will hold "our" video
@@ -199,15 +210,13 @@
                 }
               }
             };
+            grabExtraWebRTCOptions(webrtcOptions);
 
             if ($scope.muted) {
               webrtcOptions.media = {
                 audio: false,
                 video: true
               };
-            }
-            if (typeof peerConnectionConfig !== 'undefined') {
-              webrtcOptions.peerConnectionConfig = peerConnectionConfig;
             }
             // source id returned from navigator.getUserMedia (optional)
             var sourceId = $scope.sourceId;
@@ -238,7 +247,6 @@
               webrtc.mute();
             }
           }
-
 
           // event Responses to make after the webrtc object is created.
           function rtcEventResponses(webrtc)
@@ -350,4 +358,19 @@
         }
       };
     });
+
+  function grabExtraWebRTCOptions(webrtcOptions) {
+    var ngSimpleWebRTC = window.ngSimpleWebRTC || {};
+    // This is the turn/stun servers.
+    if (typeof ngSimpleWebRTC.peerConnectionConfig !== 'undefined') {
+      webrtcOptions.peerConnectionConfig = ngSimpleWebRTC.peerConnectionConfig;
+    }
+    if (typeof ngSimpleWebRTC.debug !== 'undefined') {
+      webrtcOptions.debug = ngSimpleWebRTC.debug;
+    }
+    if (typeof ngSimpleWebRTC.socketio === 'object') {
+      webrtcOptions.socketio = ngSimpleWebRTC.socketio;
+    }
+  }
+
 }(window.angular));
