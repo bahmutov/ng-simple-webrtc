@@ -13,7 +13,7 @@
     .directive('watchRoom', function () {
       return {
         template: '<div ng-show="joinedRoom">' +
-          '<div id="remotes"></div>' +
+          '<div id="remotes"></div>' + 
           '</div>',
         scope: {
           roomName: '=',
@@ -155,7 +155,9 @@
             webrtc = new SimpleWebRTC(webrtcOptions);
             postCreationRTCOptions(webrtc);
             $rootScope.webrtc = webrtc;
+            $scope.$emit('haveWebRTC');
             rtcEventResponses(webrtc);
+
 
             // Post WebRTC Options
             // And, a joinRoom command.
@@ -292,8 +294,9 @@
 
             var webrtcOptions = formRTCOptions();
             webrtc = new SimpleWebRTC(webrtcOptions);
-            $rootScope.webrtc = webrtc;
             postCreationRTCOptions(webrtc);
+            $rootScope.webrtc = webrtc;
+            $scope.$emit('haveWebRTC');
             rtcEventResponses(webrtc);
 
           });
