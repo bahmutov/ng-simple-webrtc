@@ -185,7 +185,8 @@
           minWidth: '=',
           minHeight: '=',
           videoList: '=',
-          nick: '='
+          nick: '=',
+          doNotHandleLocalStream: '='
         },
         link: function (scope, element, attr) {
           scope.mirror = attr.mirror === 'true';
@@ -198,7 +199,7 @@
             var webrtcOptions = {
               // the id/element dom element that will hold "our" video
               localVideoEl: 'localVideo',
-              autoRequestMedia: true,
+              autoRequestMedia: false,
               debug: false,
               nick: $scope.nick,
               media: {
@@ -253,29 +254,32 @@
           // event Responses to make after the webrtc object is created.
           function rtcEventResponses(webrtc)
           {
-              webrtc.on('localStream', function (stream) {
-              console.log('got video stream', stream, 'from the local camera');
-              var videoTracks = stream.getVideoTracks();
-              console.log('how many video tracks?', videoTracks.length);
-              if (videoTracks.length) {
-                var first = videoTracks[0];
-                console.log('video track label', first.label);
-              }
-              // videoList is an array, it means the user wants to append the video in it
-              if (Array.isArray($scope.videoList)) {
-                var video = document.createElement("video");
-                video.id = stream.id;
-                // TODO use $window service
-                video.src = window.URL.createObjectURL(stream);
-                video.play();
-                video.isRemote = false;
-                $scope.videoList.push(video);
-              }
 
-              $scope.hasStream = true;
-              $scope.$apply();
-            });
-
+              if( ! $scope.doNotHandleLocalStream) {
+                webrtc.off('localStream');
+                webrtc.on('localStream', function (stream) {
+                  console.log('got video stream', stream, 'from the local camera');
+                  var videoTracks = stream.getVideoTracks();
+                  console.log('how many video tracks?', videoTracks.length);
+                  if (videoTracks.length) {
+                    var first = videoTracks[0];
+                    console.log('video track label', first.label);
+                  }
+                  // videoList is an array, it means the user wants to append the video in it
+                  if (Array.isArray($scope.videoList)) {
+                    var video = document.createElement("video");
+                    video.id = stream.id;
+                    // TODO use $window service
+                    video.src = window.URL.createObjectURL(stream);
+                    video.play();
+                    video.isRemote = false;
+                    $scope.videoList.push(video);
+                  }
+                  
+                  $scope.hasStream = true;
+                  $scope.$apply();  
+                });
+              }
             webrtc.on('localMediaError', function (err) {
               console.error('local camera error', err,
                 'media constraints', webrtc.config.media);
@@ -298,7 +302,7 @@
             $rootScope.webrtc = webrtc;
             $scope.$emit('haveWebRTC');
             rtcEventResponses(webrtc);
-
+            if (!$scope.doNotHandleLocalStream) webrtc.startLocalVideo(); //otherwise webrtc.startLocalVideo();
           });
 
           function isTakenError(err) {
